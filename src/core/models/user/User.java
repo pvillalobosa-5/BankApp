@@ -9,13 +9,13 @@ package core.models.user;
  * @author edangulo
  */
 public class User {
-
-    private final String id;
+    
+    private final int id;
     private final String firstname;
     private final String lastname;
     private final int age;
 
-    public User(String id, String firstname, String lastname, int age) {
+    public User(int id, String firstname, String lastname, int age) {
 
         this.id = id;
         this.firstname = firstname;
@@ -23,11 +23,11 @@ public class User {
         this.age = age;
 
     }
-
-    public String getId() {
+    
+    public int getId() {
         return id;
     }
-
+    
     public String getFirstname() {
         return firstname;
     }
@@ -38,6 +38,14 @@ public class User {
 
     public int getAge() {
         return age;
+    }
+
+    public Object getName() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public Object getEmail() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

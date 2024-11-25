@@ -23,17 +23,16 @@ import java.util.function.BiFunction;
 
 public class TransactionController {
 
-    private final List<Transaction> transactions = new ArrayList<>();
-    private final Map<TransactionType, BiFunction<Account[], Double, Response>> transactionHandlers;
+    private static final ArrayList<Transaction> transactions = new ArrayList<>();
+    private static final Map<TransactionType, BiFunction<Account[], Double, Response>> transactionHandlers = new HashMap<>();
 
-    public TransactionController() {
-        transactionHandlers = new HashMap<>();
-        transactionHandlers.put(TransactionType.DEPOSIT, this::handleDeposit);
-        transactionHandlers.put(TransactionType.WITHDRAW, this::handleWithdrawal);
-        transactionHandlers.put(TransactionType.TRANSFER, this::handleTransfer);
+    static {
+        transactionHandlers.put(TransactionType.DEPOSIT, TransactionController::handleDeposit);
+        transactionHandlers.put(TransactionType.WITHDRAW, TransactionController::handleWithdrawal);
+        transactionHandlers.put(TransactionType.TRANSFER, TransactionController::handleTransfer);
     }
 
-    public Response executeTransaction(TransactionType type, Account source, Account destination, double amount) {
+    public static Response executeTransaction(TransactionType type, Account source, Account destination, double amount) {
         if (amount <= 0) {
             return new Response(Status.BAD_REQUEST, "Amount must be greater than zero", null);
         }
@@ -46,7 +45,7 @@ public class TransactionController {
         return handler.apply(new Account[]{source, destination}, amount);
     }
 
-    private Response handleDeposit(Account[] accounts, double amount) {
+    private static Response handleDeposit(Account[] accounts, double amount) {
         Account destination = accounts[1];
         if (destination == null) {
             return new Response(Status.BAD_REQUEST, "Destination account is required", null);
@@ -59,7 +58,7 @@ public class TransactionController {
         return new Response(Status.OK, "Deposit successful", deposit);
     }
 
-    private Response handleWithdrawal(Account[] accounts, double amount) {
+    private static Response handleWithdrawal(Account[] accounts, double amount) {
         Account source = accounts[0];
         if (source == null) {
             return new Response(Status.BAD_REQUEST, "Source account is required", null);
@@ -79,7 +78,7 @@ public class TransactionController {
         return new Response(Status.OK, "Withdrawal successful", withdraw);
     }
 
-    private Response handleTransfer(Account[] accounts, double amount) {
+    private static Response handleTransfer(Account[] accounts, double amount) {
         Account source = accounts[0];
         Account destination = accounts[1];
         if (source == null || destination == null) {
@@ -95,8 +94,11 @@ public class TransactionController {
 
         return new Response(Status.OK, "Transfer successful", transfer);
     }
+    public static List<Transaction> getAllTransactions() {
+        return new ArrayList<>(transactions);
+    }
 
-    public Response getTransactions() {
+    public static Response getTransactions() {
         return new Response(Status.OK, "Transactions retrieved successfully", transactions);
     }
 }

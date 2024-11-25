@@ -27,6 +27,7 @@ public class Account {
         this.owner = owner;
         this.balance = balance;
     }
+    
 
     public String getId() {
         return id;
@@ -52,5 +53,9 @@ public class Account {
         }
         this.balance -= amount;
         return true;
+    }
+
+    public Object getUser() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

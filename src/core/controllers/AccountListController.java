@@ -17,21 +17,17 @@ import java.util.Comparator;
  */
 public class AccountListController {
 
-    private static AccountListController instance;
-    private final ArrayList<Account> accounts;
+    private static final AccountListController instance = new AccountListController();
+    private static final ArrayList<Account> accounts = new ArrayList<>();
 
     private AccountListController() {
-        this.accounts = new ArrayList<>();
     }
 
     public static AccountListController getInstance() {
-        if (instance == null) {
-            instance = new AccountListController();
-        }
         return instance;
     }
 
-    public Response addAccount(User owner, double initialBalance) {
+    public static Response addAccount(User owner, double initialBalance) {
         if (owner == null) {
             return new Response(Status.BAD_REQUEST, "Owner must be a registered user", null);
         }
@@ -45,12 +41,12 @@ public class AccountListController {
         return new Response(Status.OK, "Account added successfully", newAccount);
     }
 
-    public Response getAccounts() {
+    public static Response getAccounts() {
         accounts.sort(Comparator.comparing(Account::getId));
         return new Response(Status.OK, "Accounts retrieved successfully", accounts);
     }
 
-    private String generateAccountId() {
+    private static String generateAccountId() {
         return "ACC" + (accounts.size() + 1);
     }
 }

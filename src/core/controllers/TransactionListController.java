@@ -18,21 +18,13 @@ import java.util.ArrayList;
  * @author ALVARO PEREZ
  */
 public class TransactionListController {
-    private static TransactionListController instance;
-    private final ArrayList<Transaction> transactions;
+
+    private static final ArrayList<Transaction> transactions = new ArrayList<>();
 
     private TransactionListController() {
-        this.transactions = new ArrayList<>();
     }
 
-    public static TransactionListController getInstance() {
-        if (instance == null) {
-            instance = new TransactionListController();
-        }
-        return instance;
-    }
-
-    public Response addTransaction(TransactionType type, Account source, Account destination, double amount) {
+    public static Response addTransaction(TransactionType type, Account source, Account destination, double amount) {
         if (amount <= 0) {
             return new Response(Status.BAD_REQUEST, "Amount must be greater than zero", null);
         }
@@ -81,7 +73,7 @@ public class TransactionListController {
         return new Response(Status.OK, "Transaction added successfully", transaction);
     }
 
-    public Response getTransactions() {
+    public static Response getTransactions() {
         return new Response(Status.OK, "Transactions retrieved successfully", transactions);
     }
 }

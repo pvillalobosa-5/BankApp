@@ -8,9 +8,17 @@ import core.controllers.UserController;
 import core.controllers.UserListController;
 import core.controllers.AccountController;
 import core.controllers.AccountListController;
+import core.controllers.AccountTableController;
+import core.controllers.CreateAccountController;
+import core.controllers.ExecuteTransactionController;
 import core.controllers.TransactionController;
 import core.controllers.TransactionListController;
+import core.controllers.TransactionTableController;
+import core.controllers.UserTableController;
 import core.controllers.utils.Response;
+import core.controllers.utils.Status;
+import core.models.account.Account;
+import core.models.transaction.TransactionType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -109,6 +117,12 @@ public class BankFrame extends javax.swing.JFrame {
         txtID.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIDActionPerformed(evt);
+            }
+        });
+
+        txtFirstname.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFirstnameActionPerformed(evt);
             }
         });
 
@@ -535,178 +549,157 @@ public class BankFrame extends javax.swing.JFrame {
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
         // TODO add your handling code here:
-        try {
-            UserController userController;
+        String firstname = txtFirstname.getText();
+        String lastname = txtLastname.getText();
+        int age = Integer.parseInt(txtAge.getText());
+        Response response = UserController.registerUser(firstname, lastname, age);
 
-            String firstname = txtFirstname.getText();
-            String lastname = txtLastname.getText();
-            int age = Integer.parseInt(txtAge.getText());
-
-            HttpResponse<User> response = userController.registerUser(firstname, lastname, age);
-
-
-            txtID.setText("");
-            txtFirstname.setText("");
-            txtLastname.setText("");
-            txtAge.setText("");
-        } catch (Exception ex) {
-           JOptionPane.showMessageDialog(this, "Error: " + response.getMessage());
-
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            int generatedId = (int) response.getObject();
+            JOptionPane.showMessageDialog(this, "Generated ID: " + generatedId, "Registration ID", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
+
+        txtID.setText("");
+        txtFirstname.setText("");
+        txtLastname.setText("");
+        txtAge.setText("");
+
     }//GEN-LAST:event_btnRegisterActionPerformed
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
-        // TODO add your handling code here:
-        try {
-            int userId = Integer.parseInt(txtUserID.getText());cambio
-            double initialBalance = Double.parseDouble(txtInitialBalance.getText());
-
-            User selectedUser = null;
-            for (User user : this.users) {
-                if (user.getId() == userId && selectedUser == null) {
-                    selectedUser = user;
-                }
-            }
-
-            if (selectedUser != null) {
-                Random random = new Random();
-                int first = random.nextInt(1000);
-                int second = random.nextInt(1000000);
-                int third = random.nextInt(100);
-
-                String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-
-                this.accounts.add(new Account(accountId, selectedUser, initialBalance));
-
-                txtUserID.setText("");
-                txtInitialBalance.setText("");
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+     int userId = Integer.parseInt(txtUserID.getText());
+        double initialBalance = Double.parseDouble(txtInitialBalance.getText());
+        UserController userController = new UserController();
+        AccountController accountController = new AccountController();
+        Response response = CreateAccountController.createAccount(accountController, userController, userId, initialBalance);
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecuteActionPerformed
-        // TODO add your handling code here:
-        try {
-            String type = cmbType.getItemAt(cmbType.getSelectedIndex());
-            switch (type) {
-                case "Deposit": {
-                    String destinationAccountId = txtDestinationAmount.getText();
-                    double amount = Double.parseDouble(txtAmount.getText());
+    private void executeTransactionButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    try {
+        // Obtener datos de los campos de entrada
+        String type = cmbType.getItemAt(cmbType.getSelectedIndex());
+        String sourceAccountId = txtSourceAccount.getText();
+        String destinationAccountId = txtDestinationAccount.getText();
+        double amount = Double.parseDouble(txtAmount.getText());
 
-                    Account destinationAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(destinationAccountId)) {
-                            destinationAccount = account;
-                        }
-                    }
-                    if (destinationAccount != null) {
-                        destinationAccount.deposit(amount);
-
-                        this.transactions.add(new DepositTransaction(destinationAccount, amount));
-
-                        txtSourceAccount.setText("");
-                        txtDestinationAmount.setText("");
-                        txtAmount.setText("");
-                    }
-                    break;
-                }
-                case "Withdraw": {
-                    String sourceAccountId = txtSourceAccount.getText();
-                    double amount = Double.parseDouble(txtAmount.getText());
-
-                    Account sourceAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(sourceAccountId)) {
-                            sourceAccount = account;
-                        }
-                    }
-                    if (sourceAccount != null && sourceAccount.withdraw(amount)) {
-                        this.transactions.add(new WithdrawTransaction(sourceAccount, amount));
-
-                        txtSourceAccount.setText("");
-                        txtDestinationAmount.setText("");
-                        txtAmount.setText("");
-                    }
-                    break;
-                }
-                case "Transfer": {
-                    String sourceAccountId = txtSourceAccount.getText();
-                    String destinationAccountId = txtDestinationAmount.getText();
-                    double amount = Double.parseDouble(txtAmount.getText());
-
-                    Account sourceAccount = null;
-                    Account destinationAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(sourceAccountId)) {
-                            sourceAccount = account;
-                        }
-                    }
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(destinationAccountId)) {
-                            destinationAccount = account;
-                        }
-                    }
-                    if (sourceAccount != null && destinationAccount != null && sourceAccount.withdraw(amount)) {
-                        destinationAccount.deposit(amount);
-
-                        this.transactions.add(new TransferTransaction(sourceAccount, destinationAccount, amount));
-
-                        txtSourceAccount.setText("");
-                        txtDestinationAmount.setText("");
-                        txtAmount.setText("");
-                    }
-                    break;
-                }
-                default: {
-                    txtSourceAccount.setText("");
-                    txtDestinationAmount.setText("");
-                    txtAmount.setText("");
-                    break;
-                }
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+        // Validar el tipo de transacción
+        TransactionType transactionType = null;
+        switch (type) {
+            case "Deposit":
+                transactionType = TransactionType.DEPOSIT;
+                break;
+            case "Withdraw":
+                transactionType = TransactionType.WITHDRAW;
+                break;
+            case "Transfer":
+                transactionType = TransactionType.TRANSFER;
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Invalid transaction type selected.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
         }
+
+        // Obtener las cuentas desde el controlador (esto es solo un ejemplo)
+        Account sourceAccount = null;
+        Account destinationAccount = null;
+        if (!sourceAccountId.isEmpty()) {
+            sourceAccount = AccountListController.getAccountById(sourceAccountId);
+            if (sourceAccount == null) {
+                JOptionPane.showMessageDialog(this, "Source account not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        if (!destinationAccountId.isEmpty()) {
+            destinationAccount = AccountListController.getAccountById(destinationAccountId);
+            if (destinationAccount == null) {
+                JOptionPane.showMessageDialog(this, "Destination account not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        // Ejecutar la transacción
+        Response response = ExecuteTransactionController.executeTransaction(
+                TransactionController, transactionType, sourceAccount, destinationAccount, amount);
+
+        // Mostrar el resultado
+        if (response.getStatus() == Status.OK) {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Invalid amount entered. Please enter a numeric value.", "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "An error occurred while processing the transaction: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+
+
     }//GEN-LAST:event_btnExecuteActionPerformed
 
     private void btnRefreshUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshUsersActionPerformed
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) tblDisplayUsers.getModel();
         model.setRowCount(0);
-
-        this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
-
-        for (User user : this.users) {
-
-            model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), userAccountMnager.getNumAccounts(user)});
+         Response response = UserTableController.refreshUserTable(model);
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
+    
+
+    
+
     }//GEN-LAST:event_btnRefreshUsersActionPerformed
 
     private void btnRefreshAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshAccountActionPerformed
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) tblDisplayAccounts.getModel();
         model.setRowCount(0);
+         Response response = AccountTableController.refreshAccountTable(model);
 
-        this.accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));
-
-        for (Account account : this.accounts) {
-            model.addRow(new Object[]{account.getId(), account.getOwner().getId(), account.getBalance()});
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
+
     }//GEN-LAST:event_btnRefreshAccountActionPerformed
 
     private void btnRefreshTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshTransactionsActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) tblDisplayTransactions.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblDisplayAccounts.getModel();
         model.setRowCount(0);
+         Response response = TransactionTableController.refreshTransactionTable(model);
 
-        ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
-        Collections.reverse(transactionsCopy);
-
-        for (Transaction transaction : transactionsCopy) {
-            model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount() != null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
+
+
     }//GEN-LAST:event_btnRefreshTransactionsActionPerformed
 
     private void txtIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIDActionPerformed
@@ -716,6 +709,10 @@ public class BankFrame extends javax.swing.JFrame {
     private void txtUserIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUserIDActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUserIDActionPerformed
+
+    private void txtFirstnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFirstnameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFirstnameActionPerformed
 
     /**
      * @param args the command line arguments
@@ -731,16 +728,24 @@ public class BankFrame extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BankFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BankFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BankFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BankFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -751,6 +756,7 @@ public class BankFrame extends javax.swing.JFrame {
             }
         });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCreate;

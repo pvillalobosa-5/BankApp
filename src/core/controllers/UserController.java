@@ -7,7 +7,6 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import java.util.ArrayList;
-import java.util.List;
 import core.models.user.User;
 import java.util.Random;
 
@@ -17,9 +16,9 @@ import java.util.Random;
  */
 public class UserController {
 
-    private final List<User> users = new ArrayList<>();
+    private static final ArrayList<User> users = new ArrayList<>();
 
-    public Response registerUser(String firstName, String lastName, int age) {
+    public static Response registerUser(String firstName, String lastName, int age) {
         if (firstName == null || firstName.isEmpty()) {
             return new Response(Status.BAD_REQUEST, "El nombre no puede estar vacío.", null);
         }
@@ -30,31 +29,41 @@ public class UserController {
             return new Response(Status.BAD_REQUEST, "El usuario debe tener al menos 18 años.", null);
         }
 
-        String userId = generateRandomID();
+        int userId = generateRandomID();
         while (isIdDuplicate(userId)) {
             userId = generateRandomID();
         }
+
         User newUser = new User(userId, firstName, lastName, age);
         users.add(newUser);
+
         return new Response(Status.OK, "Usuario registrado exitosamente.", newUser);
     }
 
-    private boolean isIdDuplicate(String id) {
+    private static boolean isIdDuplicate(int id) {
         for (User user : users) {
-            if (id.equals(user.getId())) {
+            if (id == user.getId()) {
                 return true;
             }
         }
         return false;
     }
 
-    public String generateRandomID() {
+    public static int generateRandomID() {
         Random random = new Random();
+        return random.nextInt(1_000_000_000);
+    }
 
-        String part1 = String.format("%03d", random.nextInt(1000)); // 3 dígitos
-        String part2 = String.format("%06d", random.nextInt(1000000)); // 6 dígitos
-        String part3 = String.format("%02d", random.nextInt(100)); // 2 dígitos
+    public static Response getUsers() {
+        return new Response(Status.OK, "Usuarios recuperados exitosamente.", users);
+    }
 
-        return part1 + "-" + part2 + "-" + part3;
+    public static User getUserById(int id) {
+        for (User user : users) {
+            if (user.getId() == id) {
+                return new User(user.getId(), user.getFirstname(), user.getLastname(), user.getAge());
+            }
+        }
+        return null;
     }
 }
