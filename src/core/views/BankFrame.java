@@ -2,10 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package bank;
+package core.views;
 
+import core.controllers.UserController;
+import core.controllers.UserListController;
+import core.controllers.AccountController;
+import core.controllers.AccountListController;
+import core.controllers.TransactionController;
+import core.controllers.TransactionListController;
+import core.controllers.utils.Response;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -15,19 +25,13 @@ import javax.swing.table.DefaultTableModel;
  * @author edangulo
  */
 public class BankFrame extends javax.swing.JFrame {
-    
-    private ArrayList<Account> accounts;
-    private ArrayList<Transaction> transactions;
-    private ArrayList<User> users;
-    
+
     /**
      * Creates new form BankFrame
      */
     public BankFrame() {
         initComponents();
-        this.accounts = new ArrayList<>();
-        this.transactions = new ArrayList<>();
-        this.users = new ArrayList<>();
+
     }
 
     /**
@@ -41,7 +45,7 @@ public class BankFrame extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        lblTitle = new javax.swing.JLabel();
+        lblRegisterUser = new javax.swing.JLabel();
         lblID = new javax.swing.JLabel();
         lblFirstname = new javax.swing.JLabel();
         lblLastname = new javax.swing.JLabel();
@@ -52,43 +56,43 @@ public class BankFrame extends javax.swing.JFrame {
         txtAge = new javax.swing.JTextField();
         btnRegister = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        lblCreateAccount = new javax.swing.JLabel();
+        lbUserID = new javax.swing.JLabel();
+        lblInitialBalance = new javax.swing.JLabel();
+        txtUserID = new javax.swing.JTextField();
+        txtInitialBalance = new javax.swing.JTextField();
+        btnCreate = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
-        jTextField9 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jButton3 = new javax.swing.JButton();
+        lblMakeTransaction = new javax.swing.JLabel();
+        lblType = new javax.swing.JLabel();
+        lblSouceAccount = new javax.swing.JLabel();
+        lblDestinationAccount = new javax.swing.JLabel();
+        lblAmount = new javax.swing.JLabel();
+        txtSourceAccount = new javax.swing.JTextField();
+        txtDestinationAmount = new javax.swing.JTextField();
+        txtAmount = new javax.swing.JTextField();
+        cmbType = new javax.swing.JComboBox<>();
+        btnExecute = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
-        jLabel14 = new javax.swing.JLabel();
+        lblListUsers = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton4 = new javax.swing.JButton();
+        tblDisplayUsers = new javax.swing.JTable();
+        btnRefreshUsers = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
+        lblListAccounts = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jButton5 = new javax.swing.JButton();
+        tblDisplayAccounts = new javax.swing.JTable();
+        btnRefreshAccount = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
-        jLabel16 = new javax.swing.JLabel();
+        lblListTransactions = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
-        jButton6 = new javax.swing.JButton();
+        tblDisplayTransactions = new javax.swing.JTable();
+        btnRefreshTransactions = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lblTitle.setText("Register User");
+        lblRegisterUser.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblRegisterUser.setText("Register User");
 
         lblID.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblID.setText("ID");
@@ -124,7 +128,7 @@ public class BankFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(239, 239, 239)
-                        .addComponent(lblTitle)
+                        .addComponent(lblRegisterUser)
                         .addGap(0, 270, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
@@ -149,7 +153,7 @@ public class BankFrame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(lblTitle)
+                .addComponent(lblRegisterUser)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -173,20 +177,26 @@ public class BankFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Register User", jPanel1);
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel6.setText("Create Account");
+        lblCreateAccount.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblCreateAccount.setText("Create Account");
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel7.setText("User ID");
+        lbUserID.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lbUserID.setText("User ID");
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel8.setText("Initial Balance");
+        lblInitialBalance.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblInitialBalance.setText("Initial Balance");
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jButton2.setText("Create");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        txtUserID.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                txtUserIDActionPerformed(evt);
+            }
+        });
+
+        btnCreate.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        btnCreate.setText("Create");
+        btnCreate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateActionPerformed(evt);
             }
         });
 
@@ -198,66 +208,66 @@ public class BankFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(238, 238, 238)
-                        .addComponent(jLabel6))
+                        .addComponent(lblCreateAccount))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8))
+                            .addComponent(lbUserID)
+                            .addComponent(lblInitialBalance))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField6)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE))))
+                            .addComponent(txtInitialBalance)
+                            .addComponent(txtUserID, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE))))
                 .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(265, 265, 265)
-                .addComponent(jButton2)
+                .addComponent(btnCreate)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(jLabel6)
+                .addComponent(lblCreateAccount)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                    .addComponent(txtUserID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbUserID))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(txtInitialBalance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblInitialBalance))
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(btnCreate)
                 .addContainerGap(163, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Create Account", jPanel2);
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel9.setText("Make Transaction");
+        lblMakeTransaction.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblMakeTransaction.setText("Make Transaction");
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel10.setText("Type");
+        lblType.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblType.setText("Type");
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel11.setText("Source Account");
+        lblSouceAccount.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblSouceAccount.setText("Source Account");
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel12.setText("Destination Account");
+        lblDestinationAccount.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblDestinationAccount.setText("Destination Account");
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel13.setText("Amount");
+        lblAmount.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblAmount.setText("Amount");
 
-        jTextField8.setToolTipText("");
+        txtDestinationAmount.setToolTipText("");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Deposit", "Withdraw", "Transfer" }));
+        cmbType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Deposit", "Withdraw", "Transfer" }));
 
-        jButton3.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jButton3.setText("Execute");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnExecute.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        btnExecute.setText("Execute");
+        btnExecute.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnExecuteActionPerformed(evt);
             }
         });
 
@@ -270,57 +280,57 @@ public class BankFrame extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel10)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel11))
+                            .addComponent(lblType)
+                            .addComponent(lblAmount)
+                            .addComponent(lblDestinationAccount)
+                            .addComponent(lblSouceAccount))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField8, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jComboBox1, 0, 485, Short.MAX_VALUE)
-                            .addComponent(jTextField9, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(txtDestinationAmount, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtSourceAccount, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(cmbType, 0, 485, Short.MAX_VALUE)
+                            .addComponent(txtAmount, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(227, 227, 227)
-                        .addComponent(jLabel9)))
+                        .addComponent(lblMakeTransaction)))
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(255, 255, 255)
-                .addComponent(jButton3)
+                .addComponent(btnExecute)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(jLabel9)
+                .addComponent(lblMakeTransaction)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10))
+                    .addComponent(cmbType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblType))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11))
+                    .addComponent(txtSourceAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblSouceAccount))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12))
+                    .addComponent(txtDestinationAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblDestinationAccount))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13))
+                    .addComponent(txtAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblAmount))
                 .addGap(18, 18, 18)
-                .addComponent(jButton3)
+                .addComponent(btnExecute)
                 .addContainerGap(83, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Make Transaction", jPanel3);
 
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel14.setText("List Users");
+        lblListUsers.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblListUsers.setText("List Users");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblDisplayUsers.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -339,13 +349,13 @@ public class BankFrame extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(tblDisplayUsers);
 
-        jButton4.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jButton4.setText("Refresh");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnRefreshUsers.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        btnRefreshUsers.setText("Refresh");
+        btnRefreshUsers.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnRefreshUsersActionPerformed(evt);
             }
         });
 
@@ -361,9 +371,9 @@ public class BankFrame extends javax.swing.JFrame {
                         .addContainerGap())
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(62, 62, 62)
-                        .addComponent(jLabel14)
+                        .addComponent(lblListUsers)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4)
+                        .addComponent(btnRefreshUsers)
                         .addGap(88, 88, 88))))
         );
         jPanel4Layout.setVerticalGroup(
@@ -371,8 +381,8 @@ public class BankFrame extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14)
-                    .addComponent(jButton4))
+                    .addComponent(lblListUsers)
+                    .addComponent(btnRefreshUsers))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
                 .addContainerGap())
@@ -380,10 +390,10 @@ public class BankFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("List Users", jPanel4);
 
-        jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel15.setText("List Accounts");
+        lblListAccounts.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblListAccounts.setText("List Accounts");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblDisplayAccounts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -402,13 +412,13 @@ public class BankFrame extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable2);
+        jScrollPane3.setViewportView(tblDisplayAccounts);
 
-        jButton5.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jButton5.setText("Refresh");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        btnRefreshAccount.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        btnRefreshAccount.setText("Refresh");
+        btnRefreshAccount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                btnRefreshAccountActionPerformed(evt);
             }
         });
 
@@ -422,9 +432,9 @@ public class BankFrame extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(66, 66, 66)
-                .addComponent(jLabel15)
+                .addComponent(lblListAccounts)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton5)
+                .addComponent(btnRefreshAccount)
                 .addGap(90, 90, 90))
         );
         jPanel5Layout.setVerticalGroup(
@@ -432,8 +442,8 @@ public class BankFrame extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jButton5))
+                    .addComponent(lblListAccounts)
+                    .addComponent(btnRefreshAccount))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
                 .addContainerGap())
@@ -441,10 +451,10 @@ public class BankFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("List Accounts", jPanel5);
 
-        jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel16.setText("List Transactions");
+        lblListTransactions.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblListTransactions.setText("List Transactions");
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        tblDisplayTransactions.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -470,13 +480,13 @@ public class BankFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable3);
+        jScrollPane1.setViewportView(tblDisplayTransactions);
 
-        jButton6.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jButton6.setText("Refresh");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnRefreshTransactions.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        btnRefreshTransactions.setText("Refresh");
+        btnRefreshTransactions.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnRefreshTransactionsActionPerformed(evt);
             }
         });
 
@@ -490,9 +500,9 @@ public class BankFrame extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(64, 64, 64)
-                .addComponent(jLabel16)
+                .addComponent(lblListTransactions)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton6)
+                .addComponent(btnRefreshTransactions)
                 .addGap(89, 89, 89))
         );
         jPanel6Layout.setVerticalGroup(
@@ -500,8 +510,8 @@ public class BankFrame extends javax.swing.JFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(jButton6))
+                    .addComponent(lblListTransactions)
+                    .addComponent(btnRefreshTransactions))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
                 .addContainerGap())
@@ -526,62 +536,65 @@ public class BankFrame extends javax.swing.JFrame {
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
         // TODO add your handling code here:
         try {
-            int id = Integer.parseInt(txtID.getText());
+            UserController userController;
+
             String firstname = txtFirstname.getText();
             String lastname = txtLastname.getText();
             int age = Integer.parseInt(txtAge.getText());
-            
-            this.users.add(new User(id, firstname, lastname, age));
-            
+
+            HttpResponse<User> response = userController.registerUser(firstname, lastname, age);
+
+
             txtID.setText("");
             txtFirstname.setText("");
             txtLastname.setText("");
             txtAge.setText("");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(this, "Error: " + response.getMessage());
+
         }
     }//GEN-LAST:event_btnRegisterActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         // TODO add your handling code here:
         try {
-            int userId = Integer.parseInt(jTextField5.getText());
-            double initialBalance = Double.parseDouble(jTextField6.getText());
-            
+            int userId = Integer.parseInt(txtUserID.getText());cambio
+            double initialBalance = Double.parseDouble(txtInitialBalance.getText());
+
             User selectedUser = null;
             for (User user : this.users) {
                 if (user.getId() == userId && selectedUser == null) {
                     selectedUser = user;
                 }
             }
-            
+
             if (selectedUser != null) {
                 Random random = new Random();
                 int first = random.nextInt(1000);
                 int second = random.nextInt(1000000);
                 int third = random.nextInt(100);
-                
+
                 String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-                
+
                 this.accounts.add(new Account(accountId, selectedUser, initialBalance));
-                
-                jTextField5.setText("");
-                jTextField6.setText("");
+
+                txtUserID.setText("");
+                txtInitialBalance.setText("");
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnCreateActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecuteActionPerformed
         // TODO add your handling code here:
         try {
-            String type = jComboBox1.getItemAt(jComboBox1.getSelectedIndex());
+            String type = cmbType.getItemAt(cmbType.getSelectedIndex());
             switch (type) {
                 case "Deposit": {
-                    String destinationAccountId = jTextField8.getText();
-                    double amount = Double.parseDouble(jTextField9.getText());
-                    
+                    String destinationAccountId = txtDestinationAmount.getText();
+                    double amount = Double.parseDouble(txtAmount.getText());
+
                     Account destinationAccount = null;
                     for (Account account : this.accounts) {
                         if (account.getId().equals(destinationAccountId)) {
@@ -590,19 +603,19 @@ public class BankFrame extends javax.swing.JFrame {
                     }
                     if (destinationAccount != null) {
                         destinationAccount.deposit(amount);
-                        
-                        this.transactions.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amount));
-                        
-                        jTextField7.setText("");
-                        jTextField8.setText("");
-                        jTextField9.setText("");
+
+                        this.transactions.add(new DepositTransaction(destinationAccount, amount));
+
+                        txtSourceAccount.setText("");
+                        txtDestinationAmount.setText("");
+                        txtAmount.setText("");
                     }
                     break;
                 }
                 case "Withdraw": {
-                    String sourceAccountId = jTextField7.getText();
-                    double amount = Double.parseDouble(jTextField9.getText());
-                    
+                    String sourceAccountId = txtSourceAccount.getText();
+                    double amount = Double.parseDouble(txtAmount.getText());
+
                     Account sourceAccount = null;
                     for (Account account : this.accounts) {
                         if (account.getId().equals(sourceAccountId)) {
@@ -610,19 +623,19 @@ public class BankFrame extends javax.swing.JFrame {
                         }
                     }
                     if (sourceAccount != null && sourceAccount.withdraw(amount)) {
-                        this.transactions.add(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amount));
-                        
-                        jTextField7.setText("");
-                        jTextField8.setText("");
-                        jTextField9.setText("");
+                        this.transactions.add(new WithdrawTransaction(sourceAccount, amount));
+
+                        txtSourceAccount.setText("");
+                        txtDestinationAmount.setText("");
+                        txtAmount.setText("");
                     }
                     break;
                 }
                 case "Transfer": {
-                    String sourceAccountId = jTextField7.getText();
-                    String destinationAccountId = jTextField8.getText();
-                    double amount = Double.parseDouble(jTextField9.getText());
-                    
+                    String sourceAccountId = txtSourceAccount.getText();
+                    String destinationAccountId = txtDestinationAmount.getText();
+                    double amount = Double.parseDouble(txtAmount.getText());
+
                     Account sourceAccount = null;
                     Account destinationAccount = null;
                     for (Account account : this.accounts) {
@@ -637,67 +650,72 @@ public class BankFrame extends javax.swing.JFrame {
                     }
                     if (sourceAccount != null && destinationAccount != null && sourceAccount.withdraw(amount)) {
                         destinationAccount.deposit(amount);
-                        
-                        this.transactions.add(new Transaction(TransactionType.TRANSFER, sourceAccount, destinationAccount, amount));
-                        
-                        jTextField7.setText("");
-                        jTextField8.setText("");
-                        jTextField9.setText("");
+
+                        this.transactions.add(new TransferTransaction(sourceAccount, destinationAccount, amount));
+
+                        txtSourceAccount.setText("");
+                        txtDestinationAmount.setText("");
+                        txtAmount.setText("");
                     }
                     break;
                 }
                 default: {
-                    jTextField7.setText("");
-                    jTextField8.setText("");
-                    jTextField9.setText("");
+                    txtSourceAccount.setText("");
+                    txtDestinationAmount.setText("");
+                    txtAmount.setText("");
                     break;
                 }
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnExecuteActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnRefreshUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshUsersActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblDisplayUsers.getModel();
         model.setRowCount(0);
-        
+
         this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
-        
-        for (User user : this.users) {
-            model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), user.getNumAccounts()});
-        }
-    }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        for (User user : this.users) {
+
+            model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), userAccountMnager.getNumAccounts(user)});
+        }
+    }//GEN-LAST:event_btnRefreshUsersActionPerformed
+
+    private void btnRefreshAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshAccountActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblDisplayAccounts.getModel();
         model.setRowCount(0);
-        
+
         this.accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));
-        
+
         for (Account account : this.accounts) {
             model.addRow(new Object[]{account.getId(), account.getOwner().getId(), account.getBalance()});
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_btnRefreshAccountActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void btnRefreshTransactionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshTransactionsActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblDisplayTransactions.getModel();
         model.setRowCount(0);
-        
+
         ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
         Collections.reverse(transactionsCopy);
-        
+
         for (Transaction transaction : transactionsCopy) {
-            model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount()!= null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
+            model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount() != null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
         }
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_btnRefreshTransactionsActionPerformed
 
     private void txtIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIDActionPerformed
-        // TODO add your handling code here:
+        txtID.setText("El ID se generará");
     }//GEN-LAST:event_txtIDActionPerformed
+
+    private void txtUserIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUserIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUserIDActionPerformed
 
     /**
      * @param args the command line arguments
@@ -735,24 +753,13 @@ public class BankFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCreate;
+    private javax.swing.JButton btnExecute;
+    private javax.swing.JButton btnRefreshAccount;
+    private javax.swing.JButton btnRefreshTransactions;
+    private javax.swing.JButton btnRefreshUsers;
     private javax.swing.JButton btnRegister;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
+    private javax.swing.JComboBox<String> cmbType;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -763,22 +770,33 @@ public class BankFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JLabel lbUserID;
     private javax.swing.JLabel lblAge;
+    private javax.swing.JLabel lblAmount;
+    private javax.swing.JLabel lblCreateAccount;
+    private javax.swing.JLabel lblDestinationAccount;
     private javax.swing.JLabel lblFirstname;
     private javax.swing.JLabel lblID;
+    private javax.swing.JLabel lblInitialBalance;
     private javax.swing.JLabel lblLastname;
-    private javax.swing.JLabel lblTitle;
+    private javax.swing.JLabel lblListAccounts;
+    private javax.swing.JLabel lblListTransactions;
+    private javax.swing.JLabel lblListUsers;
+    private javax.swing.JLabel lblMakeTransaction;
+    private javax.swing.JLabel lblRegisterUser;
+    private javax.swing.JLabel lblSouceAccount;
+    private javax.swing.JLabel lblType;
+    private javax.swing.JTable tblDisplayAccounts;
+    private javax.swing.JTable tblDisplayTransactions;
+    private javax.swing.JTable tblDisplayUsers;
     private javax.swing.JTextField txtAge;
+    private javax.swing.JTextField txtAmount;
+    private javax.swing.JTextField txtDestinationAmount;
     private javax.swing.JTextField txtFirstname;
     private javax.swing.JTextField txtID;
+    private javax.swing.JTextField txtInitialBalance;
     private javax.swing.JTextField txtLastname;
+    private javax.swing.JTextField txtSourceAccount;
+    private javax.swing.JTextField txtUserID;
     // End of variables declaration//GEN-END:variables
 }
